@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dtd：document type definition 配置文件规范 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- DAO接口中定义了方法，并没有定义DAO实现类
+     DAO实现类：1.jdbc相关代码(Connection,Statement,Result)
+               2.定义sql
+               3.处理结果集
+               4.关闭资源
+      针对某个DAO接口做出相关配置,mybatis会基于如下配置，完成dao实现类的定制
+ -->
+
+
+
+<mapper namespace="com.dao.BlDao"><!--dao接口的全限定名称-->
+
+    <resultMap id="BlMap" type="Bl">
+        <id column="id" property="id"></id>
+        <result column="zdsj" property="zdsj"></result>
+        <!--ks中的doctor集合的映射-->
+        <collection property="patient" javaType="Patient">
+            <id property="id" column="pid"></id>
+            <result property="name" column="pname"></result>
+        </collection>
+    </resultMap>
+
+    <!--添加g挂号信息-->
+    <insert id="gh">
+        insert into bl( pid, did,state,flag) values (#{pid}, #{did}, 0,0)
+    </insert>
+
+    <!-- 修改病例信息  进行诊断-->
+    <update id="updateBl">
+        update bl set zdnr=#{zdnr} ,zdjg=#{zdjg},jiage=#{jiage} ,state=1 where id=#{id}
+    </update>
+
+    <!-- 修改病例信息  进行结算-->
+    <update id="js">
+        update bl set flag = 1 where id=#{id}
+    </update>
+
+    <!-- 查询全部医生的病例信息-->
+    <select id="queryAllBlByDoctor" resultMap="BlMap">
+        select
+        bl.*,patient.name pname
+        from bl left join patient ON bl.pid= patient.id
+        where
+        did = #{id}
+        and state = 0
+        order by bl.id
+    </select>
+    <select id="queryBlById" resultType="Bl">
+        select * from bl where id = #{id}
+    </select>
+
+    <!--  查看未支付账单-->
+    <select id="queryNoZdList" resultType="Bl">
+        select * from bl where pid = #{pid} and flag = 0 and state = 1
+    </select>
+
+    <!--  查看未支付账单-->
+    <select id="queryAllBl" resultType="Bl">
+        select * from bl
+    </select>
+
+    <!--  查看已支付账单-->
+    <select id="queryZdList" resultType="Bl">
+        select * from bl where pid = #{pid} and flag = 1 and state = 1
+    </select>
+</mapper>

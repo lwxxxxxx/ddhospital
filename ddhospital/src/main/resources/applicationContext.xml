@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    dtd：a.dtd  abc.dtd   document type definition
+    xsd: a.xsd  abc.xsd   xml schema definition
+
+    规范：标签  顺序  层级  属性
+ -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+       xmlns:context="http://www.springframework.org/schema/context"
+
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+<!--   引用外部文件，方便以后修改配置，classpath：表示类路径-->
+    <context:property-placeholder location="classpath:database.properties"/>
+
+<!--    生产一个连接池，用set注入，给连接池的各项参数赋值-->
+    <!-- 连接池：druid -->
+        <bean id="druid_pool" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+          destroy-method="close">
+        <!-- 基本属性 url、user、password -->
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.user}"/>
+        <property name="password" value="${database.password}"/>
+        <property name="driverClassName" value="${database.driver}"/>
+
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="${database.initialSize}"/>
+        <property name="minIdle" value="${database.minIdle}"/>
+        <property name="maxActive" value="${database.maxActive}"/>
+
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${database.maxWait}"/>
+
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+
+        <!-- 配置一个连接在池中最小空闲的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
+
+        <property name="validationQuery" value="SELECT 'x'"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+    </bean>
+<!--利用Bean工厂，生产一个sqlSessionFactory对象，依赖mybatis的所有配置信息：1：连接池  2：别名 3：Mapper文件注册-->
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+<!--声明连接池的对象，相当于给工厂指定一个连接池-->
+        <property name="dataSource" ref="druid_pool"/>
+
+<!--别名，缺省包，在Map文中 需要指定实体类的地方，可以简写  直接写com.qf.entity包下的类名即可   不知道为啥这个不可以写类路径-->
+        <property name="typeAliasesPackage" value="com.pojo"/>
+<!--映射文件的位置，注意，要指定为类路径   -->
+<!--        如果daomapper文件 和 DAO接口 同包且同名，则，此依赖可以省略-->
+        <property name="mapperLocations" value="classpath:mapper/*-mapper.xml"/>
+
+<!--  开启驼峰命名-->
+        <property name="configuration" ref="settings"/>
+            <!-- 分页属性-->
+        <!--分页-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor"/>
+            </array>
+        </property>
+    </bean>
+
+    <!-- mybatis配置驼峰形式的设置类 -->
+    <bean id="settings" class="org.apache.ibatis.session.Configuration">
+        <property name="mapUnderscoreToCamelCase" value="true"/>
+    </bean>
+<!--接口扫描-->
+    <context:component-scan base-package="com">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+<!--    定制Dao的实现，将实现类的对象放入到工厂中；并用对象的dao的接口名来进行接收（首字母小写）-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+
+<!--        指定用哪个sqlSession来进行获得，一个项目可以要从多个数据中获取数据，这个时候就会有多个sqlSession  所以要对哪个DAO用哪个sqlSession进行指定 -->
+<!--        如果在spring工厂中只有一个 SqlSessionFactory 则如下依赖可以省略-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+<!--指定上面的SqlSessionFactory对象对哪些dao进行操作，如果有多个dao要用  可以用,或者;进行分割-->
+        <property name="basePackage" value="com.dao"/>
+    </bean>
+</beans>

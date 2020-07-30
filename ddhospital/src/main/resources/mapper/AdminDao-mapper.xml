@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dtd：document type definition 配置文件规范 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- DAO接口中定义了方法，并没有定义DAO实现类
+     DAO实现类：1.jdbc相关代码(Connection,Statement,Result)
+               2.定义sql
+               3.处理结果集
+               4.关闭资源
+      针对某个DAO接口做出相关配置,mybatis会基于如下配置，完成dao实现类的定制
+ -->
+
+
+<mapper namespace="com.dao.AdminDao">
+
+<!-- 管理员登录的sql-->
+    <select id="login" resultType="Admin">
+        select * from admin where id=#{id} and password=#{password}
+    </select>
+
+    <!--  管理员修改密码的sql-->
+    <update id="updatePwd">
+        update admin set password=#{newPwd} where id=#{id} and password=#{oldPwd}
+    </update>
+
+</mapper>

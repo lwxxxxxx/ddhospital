@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dtd：document type definition 配置文件规范 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- DAO接口中定义了方法，并没有定义DAO实现类
+     DAO实现类：1.jdbc相关代码(Connection,Statement,Result)
+               2.定义sql
+               3.处理结果集
+               4.关闭资源
+      针对某个DAO接口做出相关配置,mybatis会基于如下配置，完成dao实现类的定制
+ -->
+
+
+<mapper namespace="com.dao.DoctorDao">
+
+    <resultMap id="ksDoctorMap" type="Doctor">
+        <id column="id" property="id"></id>
+        <result column="kid" property="kid"></result>
+        <result column="name" property="name"></result>
+        <result column="zc" property="zc"></result>
+
+        <!--ks中的doctor集合的映射-->
+        <collection property="ks" javaType="Ks">
+            <id property="id" column="kid"></id>
+            <result property="name" column="kname"></result>
+        </collection>
+    </resultMap>
+<!--添加教师信息-->
+    <insert id="insertDoctor">
+        insert into doctor(id, name, password,kid,zc) values (#{id}, #{name}, #{password},#{kid},#{zc})
+    </insert>
+    <!-- 登录-->
+    <select id="login" resultType="Doctor">
+        select * from doctor where id=#{id} and password=#{password}
+    </select>
+    <!-- 修改密码-->
+    <update id="updatePwd">
+        update doctor set password=#{newPwd} where id=#{username} and password=#{oldPwd}
+    </update>
+
+<!-- 查询全部医生信息-->
+    <select id="queryAllDoctor" resultMap="ksDoctorMap">
+        select doctor.*,ks.id kid,ks.name kname from doctor left join ks ON ks.id= doctor.kid order by ks.id
+    </select>
+    <update id="updateDoctor">
+        update doctor set name=#{name},zc=#{zc} ,kid=#{kid} , bz=#{bz}  where id=#{id}
+    </update>
+    <!--通过编号查询教师信息-->
+    <select id="queryDoctorById" resultMap="ksDoctorMap">
+      select doctor.*,ks.id kid,ks.name kname from doctor left join ks ON ks.id= doctor.kid where doctor.id = #{id}
+    </select>
+    <delete id="delDoctor" >
+        delete from doctor where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dtd：document type definition 配置文件规范 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- DAO接口中定义了方法，并没有定义DAO实现类
+     DAO实现类：1.jdbc相关代码(Connection,Statement,Result)
+               2.定义sql
+               3.处理结果集
+               4.关闭资源
+      针对某个DAO接口做出相关配置,mybatis会基于如下配置，完成dao实现类的定制
+ -->
+
+
+<mapper namespace="com.dao.MedicineDao">
+
+<!--添加药物信息-->
+    <insert id="insertMedicine">
+        insert into medicine(id, name, sl,lb,jg) values (#{id}, #{name}, #{sl},#{lb},#{jg})
+    </insert>
+<!-- 查询全部药物信息-->
+    <select id="queryAllMedicine" resultType="Medicine">
+        select * from medicine
+    </select>
+    <update id="updateMedicine">
+        update medicine set name=#{name},sl=#{sl} ,lb=#{lb},jg=#{jg} where id=#{id}
+    </update>
+    <!--通过编号查询药物信息-->
+    <select id="queryMedicineById" resultType="Medicine">
+        select * from medicine where id=#{id}
+    </select>
+    <delete id="delMedicine" >
+        delete from medicine where id=#{id}
+    </delete>
+
+    <select id="queryCount" resultType="com.vo.Vo">
+        SELECT
+            NAME ,sl COUNT
+        FROM
+         medicine
+        WHERE
+            sl  between  0 and 50
+
+    </select>
+</mapper>

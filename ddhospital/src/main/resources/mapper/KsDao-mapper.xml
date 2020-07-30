@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dtd：document type definition 配置文件规范 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- DAO接口中定义了方法，并没有定义DAO实现类
+     DAO实现类：1.jdbc相关代码(Connection,Statement,Result)
+               2.定义sql
+               3.处理结果集
+               4.关闭资源
+      针对某个DAO接口做出相关配置,mybatis会基于如下配置，完成dao实现类的定制
+ -->
+
+
+<mapper namespace="com.dao.KsDao">
+
+    <!--定义封装ks和doctor类的resultmap-->
+    <resultMap id="ksDoctorMap" type="Ks">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <!--ks中的doctor集合的映射-->
+        <collection property="doctors" ofType="Doctor">
+            <id column="kid" property="kid"></id>
+            <result column="id" property="id"></result>
+            <result column="name" property="name"></result>
+            <result column="zc" property="zc"></result>
+        </collection>
+    </resultMap>
+
+    <!--添加科室信息-->
+    <insert id="insertKs">
+        insert into ks (id,name) values (#{id},#{name})
+    </insert>
+
+    <!-- 通过编号查询科室-->
+    <select id="queryKsById" resultType="Ks">
+        select * from ks where id=#{id}
+    </select>
+<!--  查询全部科室信息-->
+    <select id="queryAllKs" resultType="Ks">
+    select * from ks
+    </select>
+
+<!--删除科室信息-->
+    <delete id="delKs">
+        delete from ks where id=#{id}
+    </delete>
+
+    <!--  修改科室信息-->
+    <update id="updateKs">
+        update ks set name=#{name} where id=#{id}
+    </update>
+
+    <!--查询科室和医生的名字-->
+    <select id="findKsDoctor" resultMap="ksDoctorMap">
+        SELECT * FROM ks LEFT JOIN doctor ON ks.id= doctor.kid
+    </select>
+</mapper>
