@@ -84,7 +84,8 @@
 <style type="text/css">
     body{
         /* 加载背景图片 */
-        background-image: url(${pageContext.request.contextPath}/static/images/stuInfo.jpg);
+        background-color:rgba(254,249,219,0.5);
+        <%--background-image: url(${pageContext.request.contextPath}/static/images/stuInfo.jpg);--%>
         /* 背景图垂直、水平均居中 */
         background-position: center center;
         /* 背景图不平铺 */
