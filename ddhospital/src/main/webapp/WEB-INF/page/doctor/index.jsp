@@ -50,7 +50,7 @@
                     <a href="javascript:;">个人中心</a>
                     <dl class="layui-nav-child">
                         <dd><a href="javascript:;" onclick="showTab('${pageContext.request.contextPath}/page_doctor/myInfo')">我的信息</a></dd>
-                        <dd><a href="javascript:;" onclick="showTab('${pageContext.request.contextPath}/picture/findAllPicture')">tx</a></dd>
+                        <dd><a href="javascript:;" onclick="showTab('${pageContext.request.contextPath}/picture/findAllPicture')">头像</a></dd>
                         <dd><a href="javascript:;" onclick="showTab('${pageContext.request.contextPath}/page_doctor/updatePwd')">修改密码</a></dd>
                     </dl>
                 </li>
@@ -66,7 +66,7 @@
 
     <div class="layui-footer">
         <!-- 底部固定区域 -->
-        © layui.com - shdx hospital system
+
     </div>
 </div>
 <script src="${pageContext.request.contextPath}/static/js/jquery/jquery-2.1.0.min.js"></script>

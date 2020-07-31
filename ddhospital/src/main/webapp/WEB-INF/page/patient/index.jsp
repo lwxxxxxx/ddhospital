@@ -11,11 +11,11 @@
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo" style="margin-left: 600px;color:#3F9F00;">丁丁医生</div>
+        <div class="layui-logo" style="margin-left: 600px;color:#3F9F00;">医院门诊系统</div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    <img src="${pageContext.request.contextPath}/static/images/picture/1590928185355_4242ilil.jpg" class="layui-nav-img">
                     ${sessionScope.patient.name}
                 </a>
                 <dl class="layui-nav-child">
